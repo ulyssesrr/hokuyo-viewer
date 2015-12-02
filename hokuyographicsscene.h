@@ -2,14 +2,15 @@
 #define HOKUYOGRAPHICSSCENE_H
 
 #include <QGraphicsScene>
+#include <QGraphicsEllipseItem>
 
 class HokuyoGraphicsScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    HokuyoGraphicsScene();
+    explicit HokuyoGraphicsScene(QObject *parent = 0);
 public slots:
-    void setScanRanges(int value);
+    void setScanRanges(short* value);
 private:
     QVector<QGraphicsEllipseItem*> ellipses;
 };

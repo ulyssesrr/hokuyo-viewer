@@ -8,6 +8,7 @@
 #include <QGraphicsEllipseItem>
 
 #include "hokuyographicsscene.h"
+#include "hokuyoreaderthread.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,12 +20,15 @@ int main(int argc, char *argv[])
     // Create a view, put a scene in it and add tiny circles
     // in the scene
     QGraphicsView* view = new QGraphicsView();
-    HokuyoGraphicsScene* scene = new HokuyoGraphicsScene();
+    HokuyoGraphicsScene* scene = new HokuyoGraphicsScene(view);
 
-    QObject::connect(&a, SIGNAL(valueChanged(int)),
-                         &scene, SLOT(setValue(int)));
+    HokuyoReaderThread hokuyoReaderThread;
+
+    QObject::connect(&hokuyoReaderThread, SIGNAL(onScanReading(short*)),
+                         scene, SLOT(setScanRanges(short*)));
 
 
+    hokuyoReaderThread.start();
     view->setScene(scene);
 
 

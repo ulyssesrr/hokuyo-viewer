@@ -12,7 +12,7 @@ public:
 protected:
     void run();
 signals:
-    void onScanReading(int value);
+    void onScanReading(short* value);
 public slots:
 
 };
