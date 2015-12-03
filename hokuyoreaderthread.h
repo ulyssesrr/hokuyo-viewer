@@ -4,6 +4,13 @@
 #include <QThread>
 
 
+extern "C" {
+    #include "hokuyourg.h"
+};
+
+#define HOKUYO_READ_BUFFER_SIZE 16384
+
+
 class HokuyoReaderThread : public QThread
 {
     Q_OBJECT
@@ -12,9 +19,11 @@ public:
 protected:
     void run();
 signals:
-    void onScanReading(short* value);
+    void onScanReading(HokuyoRangeReading* value);
 public slots:
 
+private:
+    HokuyoURG* hokuyo;
 };
 
 #endif // HOKUYOREADERTHREAD_H

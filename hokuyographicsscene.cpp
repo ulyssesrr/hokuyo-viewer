@@ -4,7 +4,6 @@
 #include <QGraphicsView>
 #include <QDebug>
 
-
 #define MAX_SENSOR_RANGE 30000.0
 
 #define ANGLE_STEP (2*M_PI/1440.0)
@@ -16,9 +15,9 @@ HokuyoGraphicsScene::HokuyoGraphicsScene(QObject *parent) : QGraphicsScene(paren
     }*/
 }
 
-void HokuyoGraphicsScene::setScanRanges(short* stub)
+void HokuyoGraphicsScene::setScanRanges(HokuyoRangeReading* reading)
 {
-    int n_ranges = 1080;
+    int n_ranges = reading->n_ranges;
 
     // allocate ellipses (if needed)
     for (int i = this->ellipses.size(); i < n_ranges; i++) {
@@ -30,7 +29,7 @@ void HokuyoGraphicsScene::setScanRanges(short* stub)
 
     for (int i = 0; i < n_ranges; i++) {
 
-        qreal range = 30000;
+        qreal range = reading->ranges[i];
         qreal relRange = range / MAX_SENSOR_RANGE;
 
         qreal angle = i*ANGLE_STEP + 3*M_PI/4;

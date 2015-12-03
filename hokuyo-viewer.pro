@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     hokuyoreaderthread.cpp \
-    hokuyographicsscene.cpp
+    hokuyographicsscene.cpp \
+    hokuyourg.c
 
 HEADERS  += mainwindow.h \
     hokuyoreaderthread.h \
-    hokuyographicsscene.h
+    hokuyographicsscene.h \
+    hokuyourg.h
 
 FORMS    += mainwindow.ui

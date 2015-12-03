@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
 
     HokuyoReaderThread hokuyoReaderThread;
 
-    QObject::connect(&hokuyoReaderThread, SIGNAL(onScanReading(short*)),
-                         scene, SLOT(setScanRanges(short*)));
+    QObject::connect(&hokuyoReaderThread, SIGNAL(onScanReading(HokuyoRangeReading*)),
+                         scene, SLOT(setScanRanges(HokuyoRangeReading*)));
 
 
     hokuyoReaderThread.start();
