@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QMessageBox>
+#include <QApplication>
 
 HokuyoReaderThread::HokuyoReaderThread(QObject *parent) : QThread(parent)
 {
@@ -30,19 +31,35 @@ void HokuyoReaderThread::run()
             }
             else {
                 qDebug() << "Hokuyo hokuyo_startContinuous() failed.";
-                QMessageBox messageBox;
-                messageBox.critical(0, "error", "Hokuyo hokuyo_startContinuous() failed.");
+                emit onErrorStartingHokuyoContinuousRead();
+//                QMessageBox messageBox;
+//                messageBox.critical(0, "error", "Hokuyo hokuyo_startContinuous() failed.");
             }
         }
         else {
             qDebug() << "Hokuyo init() failed.";
-            QMessageBox messageBox;
-            messageBox.critical(0, "error", "Hokuyo init() failed.");
+            emit onErrorInitializingHokuyo();
+//            QMessageBox messageBox;
+//            messageBox.critical(0, "error", "Hokuyo init() failed.");
         }
     }
     else {
         qDebug() << "Hokuyo open() failed.";
-        QMessageBox messageBox;
-        messageBox.critical(0, "error", "Hokuyo open() failed.");
+        emit onErrorOpeningHokuyo();
+//        int k = 1000;
+//        while (1) {
+//            HokuyoRangeReading hokuyoReading;
+//            hokuyoReading.n_ranges = 1080;
+//            hokuyoReading.timestamp = (k-1000)/100 * 25;
+//            for (int i = 0; i < hokuyoReading.n_ranges; i++) {
+//                hokuyoReading.ranges[i] = k;
+//            }
+//            k += 100;
+//            emit onScanReading(&hokuyoReading);
+
+//            msleep(25);
+//        }
+//        QMessageBox messageBox;
+//        messageBox.critical(0, "error", "Hokuyo open() failed.");
     }
 }

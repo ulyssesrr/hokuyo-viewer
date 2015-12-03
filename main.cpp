@@ -7,19 +7,25 @@
 #include <QVector>
 #include <QGraphicsEllipseItem>
 
+#include <QGLWidget>
+
 #include "hokuyographicsscene.h"
 #include "hokuyoreaderthread.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //MainWindow w;
+    MainWindow w;
     //w.show();
 
 
     // Create a view, put a scene in it and add tiny circles
     // in the scene
-    QGraphicsView* view = new QGraphicsView();
+    QGraphicsView* view = new QGraphicsView(&w);
+    view->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers | QGL::DirectRendering)));
+    view->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    view->update();
+
     HokuyoGraphicsScene* scene = new HokuyoGraphicsScene(view);
 
     HokuyoReaderThread hokuyoReaderThread;
@@ -31,9 +37,11 @@ int main(int argc, char *argv[])
     hokuyoReaderThread.start();
     view->setScene(scene);
 
+    w.setCentralWidget(view);
+
 
     // Show the view
-    view->show();
+    w.show();
 
     return a.exec();
 }

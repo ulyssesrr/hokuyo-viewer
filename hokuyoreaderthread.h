@@ -19,7 +19,11 @@ public:
 protected:
     void run();
 signals:
+    void onErrorOpeningHokuyo();
+    void onErrorInitializingHokuyo();
+    void onErrorStartingHokuyoContinuousRead();
     void onScanReading(HokuyoRangeReading* value);
+
 public slots:
 
 private:

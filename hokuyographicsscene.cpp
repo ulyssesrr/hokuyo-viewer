@@ -13,15 +13,30 @@ HokuyoGraphicsScene::HokuyoGraphicsScene(QObject *parent) : QGraphicsScene(paren
     /*for(int i = 0; i < 1080; i++) {
         this->ellipses.append(this->addEllipse(1, 1, 1, 1));
     }*/
+    this->setItemIndexMethod(QGraphicsScene::NoIndex);
+
+    this->text = new QGraphicsTextItem;
+    this->text->setPos(150,70);
+    this->text->setPlainText("Barev");
+    this->addItem(this->text);
 }
 
 void HokuyoGraphicsScene::setScanRanges(HokuyoRangeReading* reading)
 {
     int n_ranges = reading->n_ranges;
 
+    if (this->lastTimestamp > 0) {
+        int timestampDiff = reading->timestamp - this->lastTimestamp;
+        float scanPerSec = 1000.0 / timestampDiff;
+        this->text->setPlainText(QString::number(scanPerSec) + QString(" scans/sec"));
+    }
+    this->lastTimestamp = reading->timestamp;
+
+
     // allocate ellipses (if needed)
     for (int i = this->ellipses.size(); i < n_ranges; i++) {
-        ellipses.append(this->addEllipse(1, 1, 1, 1));
+        QGraphicsEllipseItem* ellipse = this->addEllipse(1, 1, 1, 1);
+        ellipses.append(ellipse);
     }
 
     QGraphicsView* view = (QGraphicsView*) this->parent();
@@ -30,6 +45,8 @@ void HokuyoGraphicsScene::setScanRanges(HokuyoRangeReading* reading)
     for (int i = 0; i < n_ranges; i++) {
 
         qreal range = reading->ranges[i];
+        //qreal range = MAX_SENSOR_RANGE; // testing
+
         qreal relRange = range / MAX_SENSOR_RANGE;
 
         qreal angle = i*ANGLE_STEP + 3*M_PI/4;

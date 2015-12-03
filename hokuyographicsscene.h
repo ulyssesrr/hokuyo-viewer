@@ -17,6 +17,8 @@ public slots:
     void setScanRanges(HokuyoRangeReading* value);
 private:
     QVector<QGraphicsEllipseItem*> ellipses;
+    QGraphicsTextItem* text;
+    int lastTimestamp = 0;
 };
 
 #endif // HOKUYOGRAPHICSSCENE_H
