@@ -16,8 +16,8 @@ HokuyoGraphicsScene::HokuyoGraphicsScene(QObject *parent) : QGraphicsScene(paren
     this->setItemIndexMethod(QGraphicsScene::NoIndex);
 
     this->text = new QGraphicsTextItem;
-    this->text->setPos(150,70);
-    this->text->setPlainText("Barev");
+    this->text->setPos(0,0);
+    this->text->setPlainText("");
     this->addItem(this->text);
 }
 

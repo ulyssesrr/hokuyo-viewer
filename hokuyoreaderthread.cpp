@@ -22,25 +22,24 @@ void HokuyoReaderThread::run()
                 char buf[HOKUYO_READ_BUFFER_SIZE];
 
                 int i = 0;
-                while (1) {
+                while (this->running) {
                     hokuyo_readPacket(this->hokuyo, buf, HOKUYO_READ_BUFFER_SIZE, 10);
                     HokuyoRangeReading hokuyoReading;
                     hokuyo_parseReading(&hokuyoReading, buf);
                     emit onScanReading(&hokuyoReading);
                 }
+
+                qDebug() << "Closing hokuyo...";
+                hokuyo_close(this->hokuyo);
             }
             else {
                 qDebug() << "Hokuyo hokuyo_startContinuous() failed.";
                 emit onErrorStartingHokuyoContinuousRead();
-//                QMessageBox messageBox;
-//                messageBox.critical(0, "error", "Hokuyo hokuyo_startContinuous() failed.");
             }
         }
         else {
             qDebug() << "Hokuyo init() failed.";
             emit onErrorInitializingHokuyo();
-//            QMessageBox messageBox;
-//            messageBox.critical(0, "error", "Hokuyo init() failed.");
         }
     }
     else {
@@ -59,7 +58,5 @@ void HokuyoReaderThread::run()
 
 //            msleep(25);
 //        }
-//        QMessageBox messageBox;
-//        messageBox.critical(0, "error", "Hokuyo open() failed.");
     }
 }

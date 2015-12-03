@@ -28,6 +28,7 @@ public slots:
 
 private:
     HokuyoURG* hokuyo;
+    bool running = true;
 };
 
 #endif // HOKUYOREADERTHREAD_H
