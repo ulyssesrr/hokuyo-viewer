@@ -33,6 +33,14 @@ int main(int argc, char *argv[])
     QObject::connect(&hokuyoReaderThread, SIGNAL(onScanReading(hokuyoaist::ScanData*)),
                          scene, SLOT(setScanRanges(hokuyoaist::ScanData*)));
 
+    QObject::connect(&hokuyoReaderThread, SIGNAL(onErrorOpeningHokuyo()),
+                &w, SLOT(showErrorOpeningHokuyo()));
+
+    QObject::connect(&hokuyoReaderThread, SIGNAL(onErrorInitializingHokuyo()),
+                &w, SLOT(showErrorInitializingHokuyo()));
+
+    QObject::connect(&hokuyoReaderThread, SIGNAL(onErrorStartingHokuyoContinuousRead()),
+                &w, SLOT(showErrorStartingHokuyoContinuousRead()));
 
     hokuyoReaderThread.start();
     view->setScene(scene);

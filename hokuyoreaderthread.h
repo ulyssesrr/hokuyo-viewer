@@ -28,7 +28,6 @@ signals:
 public slots:
 
 private:
-    //HokuyoURG* hokuyo;
 };
 
 #endif // HOKUYOREADERTHREAD_H

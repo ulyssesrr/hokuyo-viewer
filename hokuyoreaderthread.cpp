@@ -17,11 +17,6 @@ HokuyoReaderThread::HokuyoReaderThread(QObject *parent) : QThread(parent)
 void HokuyoReaderThread::run()
 {
     std::string port_options("type=serial,device=/dev/ttyACM0,timeout=1");
-    double start_angle(0.0), end_angle(0.0);
-    int first_step(-1), last_step(-1);
-    int multiecho_mode(0);
-    unsigned int speed(0), cluster_count(1);
-    bool get_intensities(false), get_new(false), verbose(false);
 
     try
     {
@@ -64,7 +59,7 @@ void HokuyoReaderThread::run()
     catch(hokuyoaist::BaseError &e)
     {
         std::cerr << "Caught exception: " << e.what() << '\n';
-        return;
+        emit onErrorInitializingHokuyo();
     }
     catch(flexiport::PortException &e)
     {
