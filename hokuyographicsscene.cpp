@@ -15,22 +15,34 @@ HokuyoGraphicsScene::HokuyoGraphicsScene(QObject *parent) : QGraphicsScene(paren
     }*/
     this->setItemIndexMethod(QGraphicsScene::NoIndex);
 
+
+
+    //reference arrow
+    QFont font;
+    font.setPixelSize(25);
+    QGraphicsTextItem* arrow = this->addText("^", font);
+    arrow->setPos(-10, -10);
+    arrow->setDefaultTextColor(Qt::red);
+
     this->text = new QGraphicsTextItem;
-    this->text->setPos(150,70);
-    this->text->setPlainText("Barev");
+    this->text->setPos(200, 200);
+    this->text->setPlainText("");
     this->addItem(this->text);
 }
 
-void HokuyoGraphicsScene::setScanRanges(HokuyoRangeReading* reading)
+void HokuyoGraphicsScene::setScanRanges(hokuyoaist::ScanData* reading)
 {
-    int n_ranges = reading->n_ranges;
+
+    const unsigned int n_ranges = reading->ranges_length();
+    //qDebug() << "Received ranges: " << n_ranges;
 
     if (this->lastTimestamp > 0) {
-        int timestampDiff = reading->timestamp - this->lastTimestamp;
+        int timestampDiff = reading->laser_time_stamp() - this->lastTimestamp;
         float scanPerSec = 1000.0 / timestampDiff;
         this->text->setPlainText(QString::number(scanPerSec) + QString(" scans/sec"));
     }
-    this->lastTimestamp = reading->timestamp;
+    this->lastTimestamp = reading->laser_time_stamp();
+    //qDebug() << "this->lastTimestamp: " << this->lastTimestamp;
 
 
     // allocate ellipses (if needed)
@@ -44,10 +56,11 @@ void HokuyoGraphicsScene::setScanRanges(HokuyoRangeReading* reading)
 
     for (int i = 0; i < n_ranges; i++) {
 
-        qreal range = reading->ranges[i];
+        qreal range = reading->ranges()[i];
+
         //qreal range = MAX_SENSOR_RANGE; // testing
 
-        qreal relRange = range / MAX_SENSOR_RANGE;
+        qreal relRange = range / 3000;
 
         qreal angle = i*ANGLE_STEP + 3*M_PI/4;
 
@@ -58,4 +71,6 @@ void HokuyoGraphicsScene::setScanRanges(HokuyoRangeReading* reading)
 
         ellipses[i]->setRect(x, y, 1, 1);
     }
+
+    delete reading;
 }

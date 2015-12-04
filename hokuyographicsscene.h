@@ -4,9 +4,11 @@
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
 
-extern "C" {
-    #include "hokuyourg.h"
-};
+#include <hokuyoaist/hokuyoaist.h>
+
+//extern "C" {
+//    #include "hokuyourg.h"
+//};
 
 class HokuyoGraphicsScene : public QGraphicsScene
 {
@@ -14,11 +16,11 @@ class HokuyoGraphicsScene : public QGraphicsScene
 public:
     explicit HokuyoGraphicsScene(QObject *parent = 0);
 public slots:
-    void setScanRanges(HokuyoRangeReading* value);
+    void setScanRanges(hokuyoaist::ScanData* value);
 private:
     QVector<QGraphicsEllipseItem*> ellipses;
     QGraphicsTextItem* text;
-    int lastTimestamp = 0;
+    unsigned int lastTimestamp = 0;
 };
 
 #endif // HOKUYOGRAPHICSSCENE_H

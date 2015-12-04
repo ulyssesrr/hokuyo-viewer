@@ -11,16 +11,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = hokuyo-viewer
 TEMPLATE = app
 
+LIBS += -lhokuyoaist
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     hokuyoreaderthread.cpp \
-    hokuyographicsscene.cpp \
-    hokuyourg.c
+    hokuyographicsscene.cpp
 
 HEADERS  += mainwindow.h \
     hokuyoreaderthread.h \
-    hokuyographicsscene.h \
-    hokuyourg.h
+    hokuyographicsscene.h
 
 FORMS    += mainwindow.ui

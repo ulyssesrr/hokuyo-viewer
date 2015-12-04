@@ -3,10 +3,11 @@
 
 #include <QThread>
 
+#include <hokuyoaist/hokuyoaist.h>
 
-extern "C" {
-    #include "hokuyourg.h"
-};
+//extern "C" {
+//    #include "hokuyourg.h"
+//};
 
 #define HOKUYO_READ_BUFFER_SIZE 16384
 
@@ -22,12 +23,12 @@ signals:
     void onErrorOpeningHokuyo();
     void onErrorInitializingHokuyo();
     void onErrorStartingHokuyoContinuousRead();
-    void onScanReading(HokuyoRangeReading* value);
+    void onScanReading(hokuyoaist::ScanData* value);
 
 public slots:
 
 private:
-    HokuyoURG* hokuyo;
+    //HokuyoURG* hokuyo;
 };
 
 #endif // HOKUYOREADERTHREAD_H

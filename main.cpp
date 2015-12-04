@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
 
     HokuyoReaderThread hokuyoReaderThread;
 
-    QObject::connect(&hokuyoReaderThread, SIGNAL(onScanReading(HokuyoRangeReading*)),
-                         scene, SLOT(setScanRanges(HokuyoRangeReading*)));
+    QObject::connect(&hokuyoReaderThread, SIGNAL(onScanReading(hokuyoaist::ScanData*)),
+                         scene, SLOT(setScanRanges(hokuyoaist::ScanData*)));
 
 
     hokuyoReaderThread.start();

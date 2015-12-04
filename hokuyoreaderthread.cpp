@@ -1,8 +1,13 @@
 #include "hokuyoreaderthread.h"
 
+#include <iostream>
+
 #include <QDebug>
 #include <QMessageBox>
 #include <QApplication>
+
+#include <flexiport-2/flexiport/flexiport.h>
+#include <hokuyoaist/hokuyo_errors.h>
 
 HokuyoReaderThread::HokuyoReaderThread(QObject *parent) : QThread(parent)
 {
@@ -11,55 +16,60 @@ HokuyoReaderThread::HokuyoReaderThread(QObject *parent) : QThread(parent)
 
 void HokuyoReaderThread::run()
 {
-    HokuyoURG h;
-    this->hokuyo = &h;
-    int ret = hokuyo_open(this->hokuyo, " /dev/ttyACM0");
-    if (ret > 0) {
-        ret = hokuyo_init(this->hokuyo);
-        if (ret > 0) {
-            ret = hokuyo_startContinuous(this->hokuyo, 0, 1079, 0);
-            if (ret > 0) {
-                char buf[HOKUYO_READ_BUFFER_SIZE];
+    std::string port_options("type=serial,device=/dev/ttyACM0,timeout=1");
+    double start_angle(0.0), end_angle(0.0);
+    int first_step(-1), last_step(-1);
+    int multiecho_mode(0);
+    unsigned int speed(0), cluster_count(1);
+    bool get_intensities(false), get_new(false), verbose(false);
 
-                int i = 0;
-                while (1) {
-                    hokuyo_readPacket(this->hokuyo, buf, HOKUYO_READ_BUFFER_SIZE, 10);
-                    HokuyoRangeReading hokuyoReading;
-                    hokuyo_parseReading(&hokuyoReading, buf);
-                    emit onScanReading(&hokuyoReading);
-                }
-            }
-            else {
-                qDebug() << "Hokuyo hokuyo_startContinuous() failed.";
-                emit onErrorStartingHokuyoContinuousRead();
-//                QMessageBox messageBox;
-//                messageBox.critical(0, "error", "Hokuyo hokuyo_startContinuous() failed.");
-            }
+    try
+    {
+        hokuyoaist::Sensor laser; // Laser scanner object
+        //laser.set_verbose(true);
+
+        // Open the laser
+        laser.open(port_options);
+
+        // Calibrate the laser time stamp
+        std::cout << "Calibrating laser time\n";
+        laser.calibrate_time();
+        std::cout << "Calculated offset: " << laser.time_offset() << "ns\n";
+        std::cout << "Calculated drift rate: " << laser.drift_rate() << '\n';
+        std::cout << "Calculated skew alpha: " << laser.skew_alpha() << '\n';
+
+        // Turn the laser on
+        laser.set_power(true);
+
+        // Get some laser info
+        std::cout << "Laser sensor information:\n";
+        hokuyoaist::SensorInfo info;
+        laser.get_sensor_info(info);
+        std::cerr << info.as_string();
+
+        // Get range data
+        while (1) {
+            hokuyoaist::ScanData* data = new hokuyoaist::ScanData;
+            laser.get_new_ranges(*data, -1, -1, 1);
+            //qDebug() << "PRE-EMIT " << data->ranges_length();
+            emit onScanReading(data);
         }
-        else {
-            qDebug() << "Hokuyo init() failed.";
-            emit onErrorInitializingHokuyo();
-//            QMessageBox messageBox;
-//            messageBox.critical(0, "error", "Hokuyo init() failed.");
-        }
+
+        //std::cout << "Measured data:\n";
+        //std::cout << data.as_string();
+
+        // Close the laser
+        laser.close();
     }
-    else {
-        qDebug() << "Hokuyo open() failed.";
+    catch(hokuyoaist::BaseError &e)
+    {
+        std::cerr << "Caught exception: " << e.what() << '\n';
+        return;
+    }
+    catch(flexiport::PortException &e)
+    {
+        std::cerr << "Caught exception: " << e.what() << '\n';
+//        return;
         emit onErrorOpeningHokuyo();
-//        int k = 1000;
-//        while (1) {
-//            HokuyoRangeReading hokuyoReading;
-//            hokuyoReading.n_ranges = 1080;
-//            hokuyoReading.timestamp = (k-1000)/100 * 25;
-//            for (int i = 0; i < hokuyoReading.n_ranges; i++) {
-//                hokuyoReading.ranges[i] = k;
-//            }
-//            k += 100;
-//            emit onScanReading(&hokuyoReading);
-
-//            msleep(25);
-//        }
-//        QMessageBox messageBox;
-//        messageBox.critical(0, "error", "Hokuyo open() failed.");
     }
 }
